@@ -1,0 +1,31 @@
+﻿@model HomeViewModel
+
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+            <span class="fs-2 text-primary" style="font-weight:700">Tamak</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="#" class="nav-link text-dark">Профиль</a></li>
+            <li class="nav-item"><a href="/ShopCart/" class="nav-link text-dark">Корзина</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-dark">Выйти</a></li>
+        </ul>
+    </header>
+</div>
+
+
+<div style="background-color: #f2f2f2" class="album py-5">
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            @{
+                foreach (Product product in Model.allProducts)
+                {
+                    @Html.Partial("AllProducts", product)
+                }
+            }
+        </div>
+    </div>
+</div>
+
