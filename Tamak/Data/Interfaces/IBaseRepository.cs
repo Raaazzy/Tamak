@@ -10,6 +10,6 @@ namespace Tamak.Data.Interfaces
 
         Task<List<T>> Select();
 
-        Task<bool> Delete(T entity);
+        Task<bool> Delete(Task<T> entity);
     }
 }

@@ -21,7 +21,7 @@ namespace Tamak.Data.Repository
             return true;
         }
 
-        public async Task<bool> Delete(Product entity)
+        public async Task<bool> Delete(Task<Product> entity)
         {
             appDBContent.Remove(entity);
             await appDBContent.SaveChangesAsync();
