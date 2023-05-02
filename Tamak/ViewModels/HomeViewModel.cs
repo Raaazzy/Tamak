@@ -1,9 +1,10 @@
 ﻿using Tamak.Data.Models;
+using Tamak.Data.Response;
 
 namespace Tamak.ViewModels
 {
     public class HomeViewModel
     {
-        public List<Product> allProducts { get; set; }
+        public IEnumerable<Product> allProducts { get; set; }
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Tamak.Data.Repository;
 using Tamak.Migrations;
 using Tamak.Data.Models;
+using Tamak.Service.Interfaces;
+using Tamak.Service.Implementations;
 
 namespace Tamak
 {
@@ -19,6 +21,8 @@ namespace Tamak
             services.AddDbContext<AppDBContent>(options => options.UseSqlServer(_configString.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
+
             services.AddTransient<IProductsCategory, CategoryRepository>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sp => Data.Models.ShopCart.GetCart(sp));
