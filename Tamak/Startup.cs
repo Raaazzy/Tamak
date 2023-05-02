@@ -1,5 +1,4 @@
 ﻿using Tamak.Data.Interfaces;
-using Tamak.Data.Mocks;
 using Tamak.Data;
 using Microsoft.EntityFrameworkCore;
 using Tamak.Data.Repository;
@@ -18,7 +17,8 @@ namespace Tamak
 
         public void ConfigureServices(IServiceCollection services) {
             services.AddDbContext<AppDBContent>(options => options.UseSqlServer(_configString.GetConnectionString("DefaultConnection")));
-            services.AddTransient<IAllProducts, ProductRepository>();
+
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddTransient<IProductsCategory, CategoryRepository>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(sp => Data.Models.ShopCart.GetCart(sp));

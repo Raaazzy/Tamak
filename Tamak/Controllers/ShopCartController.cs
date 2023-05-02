@@ -7,15 +7,16 @@ namespace Tamak.Controllers
 {
     public class ShopCartController : Controller
     {
-        private readonly IAllProducts _productRepository;
+        private readonly IProductRepository _productRepository;
         private readonly ShopCart _shopCart;
 
-        public ShopCartController(IAllProducts productRepository, ShopCart shopCart)
+        public ShopCartController(IProductRepository productRepository, ShopCart shopCart)
         {
             _productRepository = productRepository;
             _shopCart = shopCart;
         }
 
+        [HttpGet]
         public ViewResult Index()
         {
             var items = _shopCart.getShopItems();
@@ -29,7 +30,7 @@ namespace Tamak.Controllers
 
         public RedirectToActionResult addToCart(int id)
         {
-            var item = _productRepository.Products.FirstOrDefault(x => x.Id == id);
+            var item = _productRepository.Get(id);
             if (item != null)
             {
                 _shopCart.AddToCart(item);

@@ -4,6 +4,6 @@ namespace Tamak.ViewModels
 {
     public class HomeViewModel
     {
-        public IEnumerable<Product> allProducts { get; set; }
+        public List<Product> allProducts { get; set; }
     }
 }

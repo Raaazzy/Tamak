@@ -6,19 +6,20 @@ namespace Tamak.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IAllProducts _allProducts;
+        private readonly IProductRepository _allProducts;
         private readonly IProductsCategory _allCategories;
 
-        public HomeController(IAllProducts allProducts, IProductsCategory allCategories)
+        public HomeController(IProductRepository allProducts, IProductsCategory allCategories)
         {
             _allProducts = allProducts;
             _allCategories = allCategories;
         }
 
-        public ViewResult Index()
+        [HttpGet]
+        public async Task<ActionResult> IndexAsync()
         {
             HomeViewModel obj = new HomeViewModel();
-            obj.allProducts = _allProducts.Products;
+            obj.allProducts = await _allProducts.Select();
             return View(obj);
         }
     }

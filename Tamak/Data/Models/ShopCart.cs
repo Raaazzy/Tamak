@@ -23,13 +23,13 @@ namespace Tamak.Data.Models
             return new ShopCart(context) { ShopCartId = shopCartId };
         }
 
-        public void AddToCart(Product product)
+        public async void AddToCart(Task<Product> product)
         {
             appDBContent.ShopCartItem.Add(new ShopCartItem
             {
 				ShopCartId = ShopCartId,
-                product = product,
-                price = product.Price
+                product = await product,
+                price = (await product).Price
             });
             appDBContent.SaveChanges();
         }
