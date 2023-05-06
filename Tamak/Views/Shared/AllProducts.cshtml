@@ -1,17 +1,54 @@
 ﻿@model Tamak.Data.Models.Product
 
+@if (Model.Available)
+{
 <div class="col">
     <div class="card shadow-sm">
-        <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="@Model.Img" />
+        <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
         <div class="card-body">
             <h3 class="fs-2">@Model.Name</h3>
             <p class="text-body-secondary">@Model.Description</p>
             <div class="d-flex justify-content-between align-items-center">
                 <p class="card-text">@Model.Price.ToString("c")</p>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button asp-controller="Home" asp-action="Save" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Сохранить</button>
+                        <button asp-controller="Home" asp-action="ChangeAvaliable" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Нет в наличии</button>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+} 
+else
+{
+<div class="col">
+    <div class="card shadow-sm">
+        <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
+        <div class="card-body">
+            <h3 class="fs-2">@Model.Name</h3>
+            <p class="text-body-secondary">@Model.Description</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="card-text">@Model.Price.ToString("c")</p>
+                <div class="btn-group">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button asp-controller="Home" asp-action="Save" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Сохранить</button>
+                        <button asp-controller="Home" asp-action="ChangeAvaliable" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Есть в наличии</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

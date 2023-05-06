@@ -7,17 +7,17 @@ using Tamak.ViewModels;
 
 namespace Tamak.Controllers
 {
-    public class HomeController : Controller
+    public class ProductController : Controller
     {
         private readonly IProductService _productService;
 
-        public HomeController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }
 
         [HttpGet]
-        public IActionResult IndexAsync()
+        public IActionResult GetProducts()
         {
             var response = _productService.GetProducts();
             if (response.StatusCode == Data.Enum.StatusCode.Success)
@@ -26,7 +26,7 @@ namespace Tamak.Controllers
                 obj.allProducts = response.Data;
                 return View(obj);
             }
-            return RedirectToAction("Error");
+            return RedirectToAction("Error", $"{response.Description}");
         }
 
         [HttpGet]
@@ -50,15 +50,17 @@ namespace Tamak.Controllers
             {
                 return RedirectToAction("GetProducts");
             }
-            return RedirectToAction("Error");
+            return RedirectToAction("Error", $"{response.Description}");
         }
+
+        public IActionResult Compare() => PartialView();
 
         [HttpGet]
         public async Task<IActionResult> Save(int id)
         {
             if (id == 0)
             {
-                return View();
+                return PartialView();
             }
 
             var response = await _productService.GetProduct(id);
@@ -68,8 +70,8 @@ namespace Tamak.Controllers
                 obj.allProducts = (IEnumerable<Data.Models.Product>)response.Data;
                 return View(obj);
             }
-
-            return RedirectToAction("Error");
+            ModelState.AddModelError("", response.Description);
+            return PartialView();
         }
 
         [HttpPost]
@@ -79,34 +81,46 @@ namespace Tamak.Controllers
             {
                 if (model.Id == 0)
                 {
-                    byte[] a = { 0 };
-                    await _productService.Create(model, a);
+                    byte[] imageData;
+                    using (var binaryReader = new BinaryReader(model.Avatar.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)model.Avatar.Length);
+                    } 
+                    await _productService.Create(model, imageData);
                 }
                 else
                 {
                     await _productService.Edit(model.Id, model);
                 }
+                return RedirectToAction("GetProducts");
             }
-            return RedirectToAction("GetProducts");
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeAvaliable(ProductViewModel model)
+        public JsonResult GetCategories()
         {
-            if (ModelState.IsValid)
-            {
-                if (model.Id == 0)
-                {
-                    byte[] a = { 0 };
-                    await _productService.Create(model, a);
-                }
-                else
-                {
-                    model.Available = !model.Available;
-                    await _productService.Edit(model.Id, model);
-                }
-            }
-            return RedirectToAction("GetProducts");
+            var categories = _productService.GetCategories();
+            return Json(categories.Data);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetProduct(string term)
+        {
+            var response = await _productService.GetProduct(term);
+            return Json(response.Data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProduct(int id, bool isJson)
+        {
+            var response = await _productService.GetProduct(id);
+            if (isJson)
+            {
+                return Json(response.Data);
+            }
+            return PartialView("GetCar", response.Data);
+        }
+
     }
 }

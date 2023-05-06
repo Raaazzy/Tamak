@@ -1,10 +1,23 @@
-﻿using Tamak.Data.Models;
+﻿using Tamak.Data.Interfaces;
+using Tamak.Data.Models;
 using Tamak.Data.Response;
+using Tamak.ViewModels;
 
 namespace Tamak.Service.Interfaces
 {
     public interface IProductService
     {
-        Task<IBaseResponse<IEnumerable<Product>>> GetProducts();
+        BaseResponse<Dictionary<long, string>> GetCategories();
+        public IBaseResponse<List<Product>> GetProducts();
+
+        public Task<IBaseResponse<ProductViewModel>> GetProduct(long id);
+
+        public Task<BaseResponse<Dictionary<long, string>>> GetProduct(string term);
+
+        public Task<IBaseResponse<Product>> Create(ProductViewModel productViewModel, byte[] imageData);
+
+        public Task<IBaseResponse<bool>> DeleteProduct(long id);
+
+        public Task<IBaseResponse<Product>> Edit(long id, ProductViewModel model);
     }
 }

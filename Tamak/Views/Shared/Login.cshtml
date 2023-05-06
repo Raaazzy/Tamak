@@ -1,0 +1,30 @@
+﻿@model LoginViewModel
+
+<div style="height: 600px;" class="container col-3 d-flex align-items-center">
+    <div class="form-signin w-100 m-auto">
+        <h1 style="font-weight:700;" class="fs-0 text-primary mb-4 text-center">Tamak</h1>
+
+        <form autocomplete="on" method="post" asp-controller="Account" asp-action="Login" class="needs-validation" novalidate="">
+            <div class="row g-3">
+                <div asp-validation-summary="All"></div>
+                <div class="col-12">
+                    <label for="email" class="form-label">Почта</label>
+                    <input asp-for="Name" type="email" class="form-control" id="email" placeholder="vpupkin@edu.hse.ru">
+                    <div class="invalid-feedback">
+                        Вы ввели неверную почту
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label for="email" class="form-label">Пароль</label>
+                    <input input autocomplete="new-password" asp-for="Password" type="password" class="form-control" id="email" placeholder="Пароль">
+                    <div class="invalid-feedback">
+                        Вы ввели неверный пароль
+                    </div>
+                </div>
+                <a href="/Account/Register" type="button" class="float-left">Регистрация</a>
+                <button class="w-100 btn btn-primary" type="submit">Войти</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+﻿@model RegisterViewModel
+
+<div style="height: 600px;" class="container col-3 d-flex align-items-center">
+    <div class="form-signin w-100 m-auto">
+        <h1 style="font-weight:700;" class="fs-0 text-primary mb-4 text-center">Tamak</h1>
+
+        <form asp-controller="Account" asp-action="Register">
+            <div class="row g-3">
+                <div asp-validation-summary="All"></div>
+                <div class="col-12">
+                    <label for="email" class="form-label">Почта</label>
+                    <input asp-for="Name" type="email" class="form-control" id="email" placeholder="vpupkin@edu.hse.ru">
+                    <div class="invalid-feedback">
+                        Вы ввели неверную почту
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label for="email" class="form-label">Пароль</label>
+
+                    <input autocomplete="new-password" asp-for="Password" type="password" class="form-control" placeholder="Пароль" id="password">
+                    <input autocomplete="new-password" asp-for="PasswordConfirm" placeholder="Подтвердите пароль" class="form-control" type="password" id="password">
+
+                    <div class="invalid-feedback">
+                        Вы ввели неверный пароль
+                    </div>
+                </div>
+                <a href="/" type="button" class="float-left">Логин</a>
+                <button class="w-100 btn btn-primary" type="submit">Зарегистрироваться</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -4,7 +4,7 @@ using Tamak.Data.Models;
 
 namespace Tamak.Data.Repository
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : IBaseRepository<Product>
     {
         private readonly AppDBContent appDBContent;
 
@@ -13,35 +13,28 @@ namespace Tamak.Data.Repository
             this.appDBContent = appDBContent;
         }
 
-        public async Task<bool> Create(Product entity)
+        public async Task Create(Product entity)
         {
             await appDBContent.Products.AddAsync(entity);
             await appDBContent.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<bool> Delete(Task<Product> entity)
+        public async Task Delete(Product entity)
         {
-            appDBContent.Remove(entity);
+            appDBContent.Products.Remove(entity);
             await appDBContent.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<Product> Get(int id)
+        public IQueryable<Product> GetAll()
         {
-            return await appDBContent.Products.FirstOrDefaultAsync(p => p.Id == id);
+            return appDBContent.Products;
         }
 
-        public async Task<Product> GetByName(string name)
+        public async Task<Product> Update(Product entity)
         {
-            return await appDBContent.Products.FirstOrDefaultAsync(p => p.Name == name);
-        }
-
-        public async Task<List<Product>> Select()
-        {
-            return await appDBContent.Products.ToListAsync();
+            appDBContent.Products.Update(entity);
+            await appDBContent.SaveChangesAsync();
+            return entity;
         }
     }
 }

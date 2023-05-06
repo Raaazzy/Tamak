@@ -1,5 +1,6 @@
 ﻿@model HomeViewModel
 
+@if (User.Identity.IsAuthenticated) {
 <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
@@ -8,8 +9,12 @@
 
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="#" class="nav-link text-dark">Профиль</a></li>
-            <li class="nav-item"><a href="/ShopCart/" class="nav-link text-dark">Корзина</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark">Выйти</a></li>
+            <li class="nav-item"><a href="#" class="nav-link text-dark">Корзина</a></li>
+            <li class="nav-item">
+                <form method="post" asp-controller="Account" asp-action="Logout">
+                    <input class="nav-link text-dark" type="submit" value="Выйти"/>
+                </form>
+            </li>
         </ul>
     </header>
 </div>
@@ -17,11 +22,13 @@
 
 <div style="background-color: #f2f2f2" class="album py-5">
     <div class="container">
-
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             @{
+                var id = 1;
                 foreach (Product product in Model.allProducts)
                 {
+                    ++id;
+                    product.Id = id;
                     @Html.Partial("AllProducts", product)
                 }
             }
@@ -29,3 +36,9 @@
     </div>
 </div>
 
+
+}
+else
+{
+    @Html.Partial("Login", Model.loginViewModel)
+}

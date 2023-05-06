@@ -1,144 +1,248 @@
-﻿using Tamak.Data.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Tamak.Data.Enum;
+using Tamak.Data.Extensions;
+using Tamak.Data.Interfaces;
 using Tamak.Data.Models;
 using Tamak.Data.Response;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
 
-namespace Tamak.Service.Implementations
+namespace Automarket.Service.Implementations
 {
-    public class ProductService: IProductService
+    public class ProductService : IProductService
     {
-        private readonly IProductRepository _allProducts;
+        private readonly IBaseRepository<Product> _productRepository;
 
-        public ProductService(IProductRepository allProducts)
+        public ProductService(IBaseRepository<Product> productRepository)
         {
-            _allProducts = allProducts;
+            _productRepository = productRepository;
         }
 
-        public async Task<IBaseRepository<ProductViewModel>> CreateProduct(ProductViewModel productViewModel)
+        public BaseResponse<Dictionary<long, string>> GetCategories()
         {
-            var baseResponse = new BaseResponse<ProductViewModel>();
+            try
+            {
+                var types = ((Category[])Enum.GetValues(typeof(Category)))
+                    .ToDictionary(k => (long)k, t => t.GetDisplayName());
+
+                return new BaseResponse<Dictionary<long, string>>()
+                {
+                    Data = types,
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Dictionary<long, string>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Dictionary<long, string>>> GetProduct(string term)
+        {
+            var baseResponse = new BaseResponse<Dictionary<long, string>>();
+            try
+            {
+                var products = await _productRepository.GetAll()
+                    .Select(x => new ProductViewModel()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        Price = x.Price,
+                        Available= x.Available,
+                        Category = x.Category.GetDisplayName()
+                    })
+                    .Where(x => EF.Functions.Like(x.Name, $"%{term}%"))
+                    .ToDictionaryAsync(x => x.Id, t => t.Name);
+
+                baseResponse.Data = products;
+                return baseResponse;
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Dictionary<long, string>>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<ProductViewModel>> GetProduct(long id)
+        {
+            try
+            {
+                var product = await _productRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+                if (product == null)
+                {
+                    return new BaseResponse<ProductViewModel>()
+                    {
+                        Description = "Пользователь не найден",
+                        StatusCode = StatusCode.UserNotFound
+                    };
+                }
+
+                var data = new ProductViewModel()
+                {
+                    Description = product.Description,
+                    Category = product.Category.GetDisplayName(),
+                    Img = product.Avatar,
+                };
+
+                return new BaseResponse<ProductViewModel>()
+                {
+                    StatusCode = StatusCode.Success,
+                    Data = data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<ProductViewModel>()
+                {
+                    Description = $"[GetProduct] : {ex.Message}",
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<Product>> Create(ProductViewModel model, byte[] imageData)
+        {
             try
             {
                 var product = new Product()
                 {
-                    Description = productViewModel.Description,
-                    Name = productViewModel.Name,
-                    Img = productViewModel.Img,
-                    Price = productViewModel.Price,
-                    Available = productViewModel.Available,
-                    //Category = productViewModel.Category
+                    Name = model.Name,
+                    Description = model.Description,
+                    Category = (Category)Convert.ToInt32(model.Category),
+                    Price = model.Price,
+                    Avatar = imageData
                 };
-                await _allProducts.Create(product);
-                return (IBaseRepository<ProductViewModel>)baseResponse;
+                await _productRepository.Create(product);
+
+                return new BaseResponse<Product>()
+                {
+                    StatusCode = StatusCode.Success,
+                    Data = product
+                };
             }
             catch (Exception ex)
             {
-                return (IBaseRepository<ProductViewModel>)new BaseResponse<ProductViewModel>()
+                return new BaseResponse<Product>()
                 {
-                    Description = $"[GetProduct] : {ex.Message}",
-                    StatusCode = Data.Enum.StatusCode.InternalServerError,
+                    Description = $"[Create] : {ex.Message}",
+                    StatusCode = StatusCode.InternalServerError
                 };
             }
         }
 
-        public async Task<IBaseRepository<Product>> GetProduct(int id)
+        public async Task<IBaseResponse<bool>> DeleteProduct(long id)
         {
-            var baseResponse = new BaseResponse<Product>();
             try
             {
-                var product = await _allProducts.Get(id);
+                var product = await _productRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
                 if (product == null)
                 {
-                    baseResponse.Description = "Пользователь не найден";
-                    baseResponse.StatusCode = Data.Enum.StatusCode.UserNotFound;
-                    return (IBaseRepository<Product>)baseResponse;
+                    return new BaseResponse<bool>()
+                    {
+                        Description = "User not found",
+                        StatusCode = StatusCode.UserNotFound,
+                        Data = false
+                    };
                 }
-                baseResponse.Data= product;
-                return (IBaseRepository<Product>)baseResponse;
-            }
-            catch (Exception ex) 
-            {
-                return (IBaseRepository<Product>)new BaseResponse<Product>()
-                {
-                    Description = $"[GetProduct] : {ex.Message}",
-                    StatusCode = Data.Enum.StatusCode.InternalServerError,
-                };
-            }
-        }
 
-        public async Task<IBaseRepository<bool>> DeleteProduct(int id)
-        {
-            var baseResponse = new BaseResponse<bool>();
-            try
-            {
-                var product = _allProducts.Get(id);
-                if (product == null)
+                await _productRepository.Delete(product);
+
+                return new BaseResponse<bool>()
                 {
-                    baseResponse.Description = "Пользователь не найден";
-                    baseResponse.StatusCode = Data.Enum.StatusCode.UserNotFound;
-                    return (IBaseRepository<bool>)baseResponse;
-                }
-                await _allProducts.Delete(product);
-                return (IBaseRepository<bool>)baseResponse;
+                    Data = true,
+                    StatusCode = StatusCode.Success
+                };
             }
             catch (Exception ex)
             {
-                return (IBaseRepository<bool>)new BaseResponse<bool>()
+                return new BaseResponse<bool>()
                 {
                     Description = $"[DeleteProduct] : {ex.Message}",
-                    StatusCode = Data.Enum.StatusCode.InternalServerError,
+                    StatusCode = StatusCode.InternalServerError
                 };
             }
         }
 
-        public async Task<IBaseRepository<Product>> GetProductByName(string name)
+        public async Task<IBaseResponse<Product>> Edit(long id, ProductViewModel model)
         {
-            var baseResponse = new BaseResponse<Product>();
             try
             {
-                var product = await _allProducts.GetByName(name);
+                var product = await _productRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
                 if (product == null)
                 {
-                    baseResponse.Description = "Пользователь не найден";
-                    baseResponse.StatusCode = Data.Enum.StatusCode.UserNotFound;
-                    return (IBaseRepository<Product>)baseResponse;
+                    return new BaseResponse<Product>()
+                    {
+                        Description = "Product not found",
+                        StatusCode = StatusCode.ProductNotFound
+                    };
                 }
-                baseResponse.Data = product;
-                return (IBaseRepository<Product>)baseResponse;
+
+                product.Description = model.Description;
+                product.Name = model.Name;
+                product.Price = model.Price;
+                product.Available = model.Available;
+
+                await _productRepository.Update(product);
+
+
+                return new BaseResponse<Product>()
+                {
+                    Data = product,
+                    StatusCode = StatusCode.Success,
+                };
+                // TypeCar
             }
             catch (Exception ex)
             {
-                return (IBaseRepository<Product>)new BaseResponse<Product>()
+                return new BaseResponse<Product>()
                 {
-                    Description = $"[GetProductByName] : {ex.Message}",
-                    StatusCode = Data.Enum.StatusCode.InternalServerError,
+                    Description = $"[Edit] : {ex.Message}",
+                    StatusCode = StatusCode.InternalServerError
                 };
             }
         }
 
-        public async Task<IBaseResponse<IEnumerable<Product>>> GetProducts()
+        public IBaseResponse<List<Product>> GetProducts()
         {
-            var baseResponse = new BaseResponse<IEnumerable<Product>>();
             try
             {
-                var products = await _allProducts.Select();
-                if (products.Count == 0)
+                var products = _productRepository.GetAll().ToList();
+                if (!products.Any())
                 {
-                    baseResponse.Description = "Упс, такого продукта не существует...";
-                    baseResponse.StatusCode = Data.Enum.StatusCode.NotFound;
-                    return baseResponse;
+                    return new BaseResponse<List<Product>>()
+                    {
+                        Description = "Найдено 0 элементов",
+                        StatusCode = StatusCode.Success
+                    };
                 }
-                baseResponse.Data = products;
-                baseResponse.StatusCode = Data.Enum.StatusCode.Success;
-                return baseResponse;
-            } 
-            catch(Exception ex)
+
+                return new BaseResponse<List<Product>>()
+                {
+                    Data = products,
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
             {
-                return new BaseResponse<IEnumerable<Product>>()
+                return new BaseResponse<List<Product>>()
                 {
                     Description = $"[GetProducts] : {ex.Message}",
-                    StatusCode = Data.Enum.StatusCode.InternalServerError,
+                    StatusCode = StatusCode.InternalServerError
                 };
             }
         }
