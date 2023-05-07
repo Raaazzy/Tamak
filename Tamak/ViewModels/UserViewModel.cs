@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Tamak.Data.Enum;
 
 namespace Tamak.ViewModels
 {
@@ -10,13 +11,16 @@ namespace Tamak.ViewModels
         [Display(Name = "Роль")]
         public string Role { get; set; }
 
-        [Display(Name = "Логин")]
+        [Display(Name = "Имя")]
         public string Name { get; set; }
 
-        [Display(Name = "Возраст")]
-        public short Age { get; set; }
+        [Display(Name = "Почта")]
+        public string Email { get; set; }
 
-        [Display(Name = "Адресс")]
-        public string Address { get; set; }
+        [Display(Name = "Корпус")]
+        public string Campus { get; set; }
+
+        [Display(Name = "Город")]
+        public string City { get; set; }
     }
 }

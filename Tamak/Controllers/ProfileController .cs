@@ -13,35 +13,28 @@ namespace Tamak.Controllers
             _profileService = profileService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ProfileInfo()
-        {
-            var userName = User.Identity?.Name;
-            var response = await _profileService.Get(userName);
-            if (response.StatusCode == Data.Enum.StatusCode.Success)
-            {
-                return View(response.Data);
-            }
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult Save() => PartialView();
-
         [HttpPost]
         public async Task<IActionResult> Save(ProfileViewModel model)
         {
+            ModelState.Remove("Email");
             if (ModelState.IsValid)
             {
-                if (model.Id == 0)
+                var response = await _profileService.Save(model);
+                if (response.StatusCode == Data.Enum.StatusCode.Success)
                 {
-                    await _profileService.Create(model);
+                    return Json(new { data = response.Description });
                 }
-                else
-                {
-                    await _profileService.Edit(model.Id, model);
-                }
-                return RedirectToAction("ProfileInfo");
+            }
+            return BadRequest();
+        }
+
+        public async Task<IActionResult> Detail()
+        {
+            var userName = User.Identity.Name;
+            var response = await _profileService.GetProfile(userName);
+            if (response.StatusCode == Data.Enum.StatusCode.Success)
+            {
+                return View(response.Data);
             }
             return View();
         }

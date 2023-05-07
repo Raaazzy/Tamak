@@ -36,8 +36,11 @@ namespace Tamak.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    City = table.Column<int>(type: "int", nullable: false),
+                    Campus = table.Column<int>(type: "int", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -52,8 +55,8 @@ namespace Tamak.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "Id", "Name", "Password", "Role" },
-                values: new object[] { 1L, "Test1", "8a863b145dc6e4ed7ac41c08f7536c476ebac7509e028ed2b49f8bd5a3562b9f", 2 });
+                columns: new[] { "Id", "Campus", "City", "Email", "Name", "Password", "Role" },
+                values: new object[] { 1L, 0, 0, "Test@edu.hse.ru", "Test1", "8a863b145dc6e4ed7ac41c08f7536c476ebac7509e028ed2b49f8bd5a3562b9f", 2 });
         }
 
         /// <inheritdoc />

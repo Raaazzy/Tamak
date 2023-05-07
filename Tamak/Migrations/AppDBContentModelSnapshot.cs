@@ -80,6 +80,17 @@ namespace Tamak.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("Campus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -100,6 +111,9 @@ namespace Tamak.Migrations
                         new
                         {
                             Id = 1L,
+                            Campus = 0,
+                            City = 0,
+                            Email = "Test@edu.hse.ru",
                             Name = "Test1",
                             Password = "8a863b145dc6e4ed7ac41c08f7536c476ebac7509e028ed2b49f8bd5a3562b9f",
                             Role = 2

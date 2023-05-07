@@ -1,19 +1,71 @@
 ﻿@model RegisterViewModel
 
-<div style="height: 600px;" class="container col-3 d-flex align-items-center">
+<div class="container col-sm-5 col-md-4 col-lg-3 d-flex align-items-center">
     <div class="form-signin w-100 m-auto">
         <h1 style="font-weight:700;" class="fs-0 text-primary mb-4 text-center">Tamak</h1>
 
         <form asp-controller="Account" asp-action="Register">
             <div class="row g-3">
+
+                <div class="my-3">
+                    <div class="form-check form-check-inline">
+                        <input asp-for="Role" value="Admin" id="Admin" name="Role" type="radio" class="form-check-input" required="" onchange='showOrHide("Admin");'>
+                        <label class="form-check-label" for="admin">Предприятие</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="Role" value="User" id="User" name="Role" type="radio" class="form-check-input" checked="" required="" onchange='showOrHide("Admin");'>
+                        <label class="form-check-label" for="user">Покупатель</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label for="City" class="form-label">Город</label>
+                    <select asp-for="City" class="form-select" id="city" required="">
+                        <option value="">Выберите...</option>
+                        <option value="Moscow">Москва</option>
+                        <option value="Spb">Санкт-Петербург</option>
+                        <option value="Nn">Нижний Новгород</option>
+                        <option value="Perm">Пермь</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Пожалуйста, выберите город
+                    </div>
+                </div>
+
                 <div asp-validation-summary="All"></div>
                 <div class="col-12">
-                    <label for="email" class="form-label">Почта</label>
-                    <input asp-for="Name" type="email" class="form-control" id="email" placeholder="vpupkin@edu.hse.ru">
+                    <label for="Name" class="form-label" id="userBlock">Имя</label>
+                    <label for="Name" class="form-label" id="adminBlock1" style="display: none;">Название организации</label>
+
+                    <input asp-for="Name" type="name" class="form-control" id="name" placeholder="Михаил">
+                    <div class="invalid-feedback">
+                        Вы ввели неверное имя (такое вообще бывает???)
+                    </div>
+                </div>
+
+                <input asp-for="Campus" value="None" name="Campus" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                <div class="col-12" id="adminBlock2" style="display: none;">
+                    <label for="Campus" class="form-label">Корпус</label>
+                    <select asp-for="Campus" class="form-select" id="campus" required="">
+                        <option value="">Выберите...</option>
+                        <option value="Pokrovka">Покровский бульвар</option>
+                        <option value="Shabolovka">Шаболовка</option>
+                        <option value="Strogino">Строгино</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Пожалуйста, выберите корпус
+                    </div>
+                </div>
+
+
+                <div class="col-12">
+                    <label for="Email" class="form-label">Почта</label>
+                    <input asp-for="Email" type="email" class="form-control" id="email" placeholder="vpupkin@edu.hse.ru">
                     <div class="invalid-feedback">
                         Вы ввели неверную почту
                     </div>
                 </div>
+
 
                 <div class="col-12">
                     <label for="email" class="form-label">Пароль</label>
@@ -31,3 +83,19 @@
         </form>
     </div>
 </div>
+
+<script>
+    function showOrHide(cb) {
+        cb = document.getElementById(cb);
+        if (cb.checked){
+            document.getElementById("adminBlock1").style.display = "block";
+            document.getElementById("adminBlock2").style.display = "block";
+            document.getElementById("userBlock").style.display = "none";
+        }
+        else{
+            document.getElementById("adminBlock1").style.display = "none";
+            document.getElementById("adminBlock2").style.display = "none";
+            document.getElementById("userBlock").style.display = "block";
+        }
+    }
+</script>

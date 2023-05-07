@@ -25,8 +25,11 @@ namespace Tamak.Service.Implementations
                     .Select(x => new UserViewModel()
                     {
                         Id = x.Id,
+                        Email = x.Email,
                         Name = x.Name,
-                        Role = x.Role.GetDisplayName()
+                        Role = x.Role.GetDisplayName(),
+                        City = x.City.GetDisplayName(),
+                        Campus = x.Campus.GetDisplayName()
                     });
 
                 return new BaseResponse<IEnumerable<UserViewModel>>()

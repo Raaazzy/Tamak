@@ -26,19 +26,22 @@ namespace Tamak.Service.Implementations
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Name == model.Name);
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
                 if (user != null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Пользователь с таким логином уже есть",
+                        Description = "Пользователь с такой почтой уже существует",
                     };
                 }
 
                 user = new User()
                 {
                     Name = model.Name,
-                    Role = Role.User,
+                    Email = model.Email,
+                    Role = (Role)Enum.Parse(typeof(Role), model.Role),
+                    City = (City)Enum.Parse(typeof(City), model.City),
+                    Campus = (Campus)Enum.Parse(typeof(Campus), model.Campus),
                     Password = HashPasswordHelper.HashPassowrd(model.Password),
                 };
 
@@ -67,7 +70,7 @@ namespace Tamak.Service.Implementations
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Name == model.Name);
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
                 if (user == null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
@@ -106,7 +109,7 @@ namespace Tamak.Service.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Name),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
             };
             return new ClaimsIdentity(claims, "ApplicationCookie",

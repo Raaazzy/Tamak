@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Web.Helpers;
 using Tamak.Data.Enum;
+using Tamak.Data.Extensions;
 using Tamak.Data.Interfaces;
 using Tamak.Data.Models;
 using Tamak.Data.Response;
@@ -10,53 +12,76 @@ namespace Tamak.Service.Implementations
 {
     public class ProfileService : IProfileService
     {
+        private readonly ILogger<ProfileService> _logger;
         private readonly IBaseRepository<Profile> _profileRepository;
 
-        public ProfileService(IBaseRepository<Profile> profileRepository)
+        public ProfileService(IBaseRepository<Profile> profileRepository,
+            ILogger<ProfileService> logger)
         {
             _profileRepository = profileRepository;
+            _logger = logger;
         }
 
-        public async Task<IBaseResponse<Profile>> Get(string userName)
+        public async Task<BaseResponse<ProfileViewModel>> GetProfile(string email)
         {
             try
             {
-                var car = await _profileRepository.GetAll()
-                    .Include(x => x.User)
-                    .FirstOrDefaultAsync(x => x.User.Name == userName);
-                if (car == null)
-                {
-                    return new BaseResponse<Profile>()
+                var profile = await _profileRepository.GetAll()
+                    .Select(x => new ProfileViewModel()
                     {
-                        Description = "Пользователь не найден",
-                        StatusCode = StatusCode.UserNotFound
-                    };
-                }
+                        Id = x.Id,
+                        Name = x.Name,
+                        City = x.City.GetDisplayName(),
+                        Campus = x.Campus.GetDisplayName()
+                    })
+                    .FirstOrDefaultAsync(x => x.Email == email);
 
-                return new BaseResponse<Profile>()
+                return new BaseResponse<ProfileViewModel>()
                 {
-                    StatusCode = StatusCode.Success,
-                    Data = car
+                    Data = profile,
+                    StatusCode = StatusCode.Success
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<Profile>()
+                _logger.LogError(ex, $"[ProfileService.GetProfile] error: {ex.Message}");
+                return new BaseResponse<ProfileViewModel>()
                 {
-                    Description = $"[Get] : {ex.Message}",
-                    StatusCode = StatusCode.InternalServerError
+                    StatusCode = StatusCode.InternalServerError,
+                    Description = $"Внутренняя ошибка: {ex.Message}"
                 };
             }
         }
 
-        public Task<IBaseResponse<Profile>> Create(ProfileViewModel model)
+        public async Task<BaseResponse<Profile>> Save(ProfileViewModel model)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var profile = await _profileRepository.GetAll()
+                    .FirstOrDefaultAsync(x => x.Id == model.Id);
 
-        public Task<IBaseResponse<Product>> Edit(long id, ProfileViewModel model)
-        {
-            throw new NotImplementedException();
+                profile.Name = model.Name;
+                profile.City = (City)Enum.Parse(typeof(City), model.City);
+                profile.Campus = (Campus)Enum.Parse(typeof(Campus), model.Campus);
+
+                await _profileRepository.Update(profile);
+
+                return new BaseResponse<Profile>()
+                {
+                    Data = profile,
+                    Description = "Данные обновлены",
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[ProfileService.Save] error: {ex.Message}");
+                return new BaseResponse<Profile>()
+                {
+                    StatusCode = StatusCode.InternalServerError,
+                    Description = $"Внутренняя ошибка: {ex.Message}"
+                };
+            }
         }
     }
 }

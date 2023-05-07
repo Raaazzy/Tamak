@@ -14,6 +14,8 @@ namespace Tamak.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Profile> Profiles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
             modelBuilder.Entity<User>(builder =>
@@ -22,13 +24,20 @@ namespace Tamak.Data
                 {
                     Id = 1,
                     Name = "Test1",
+                    Email = "Test@edu.hse.ru",
                     Password = HashPasswordHelper.HashPassowrd("Test1"),
-                    Role = Role.Admin
+                    Role = Role.Admin,
+                    City = City.Moscow,
+                    Campus = Campus.Pokrovka
+
                 });
                 builder.ToTable("User").HasKey(x => x.Id);
                 builder.Property(x => x.Id).ValueGeneratedOnAdd();
                 builder.Property(x => x.Password).IsRequired();
                 builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                builder.Property(x => x.Email).HasMaxLength(100).IsRequired();
+
+                builder.HasOne(x => x.Profile).WithOne(x => x.User).HasPrincipalKey<User>(x => x.Id).OnDelete(DeleteBehavior.Cascade);
             });
 
 
@@ -46,6 +55,16 @@ namespace Tamak.Data
                 });
                 builder.ToTable("Products").HasKey(x => x.Id);
                 builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<Profile>(builder =>
+            {
+                builder.ToTable("Profiles").HasKey(x => x.Id);
+                builder.Property(x => x.Id).ValueGeneratedOnAdd();
+                builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                builder.Property(x => x.City).IsRequired();
+                builder.Property(x => x.Campus).IsRequired();
+
             });
         }
     }
