@@ -1,54 +1,112 @@
-﻿@model Tamak.Data.Models.Product
+﻿@model Product
 
-@if (Model.Available)
+@if (Model.Available.ToString() == "True")
 {
-<div class="col">
-    <div class="card shadow-sm">
-        <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
-        <div class="card-body">
-            <h3 class="fs-2">@Model.Name</h3>
-            <p class="text-body-secondary">@Model.Description</p>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="card-text">@Model.Price.ToString("c")</p>
-                <div class="btn-group">
-                        @if (User.IsInRole("User"))
-                    {
-                        <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
-                    }
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <button asp-controller="Home" asp-action="Save" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Сохранить</button>
-                        <button asp-controller="Home" asp-action="ChangeAvaliable" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Нет в наличии</button>
-                    }
-                </div>
+    <div class="col">
+        <div class="card shadow-sm" id="backCard" style="opacity: 1">
+            <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
+            <div class="card-body">
+                @if (User.IsInRole("User"))
+                {
+                    <h3 class="fs-2">@Model.Name</h3>
+                    <p class="text-body-secondary">@Model.Description</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="card-text">@Model.Price.ToString("c")</p>
+                        <div class="btn-group">
+                            <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <form id="productCardId">
+                        <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 1">
+                        <textarea type="text" class="form-control text-body-secondary formColor" asp-for="Description" style="opacity: 1"></textarea>
+                        <div class="justify-content-between align-items-center">
+                            <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 1">
+                        </div>
+
+                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="saveProductId">Сохранить</button>
+
+                    </form>
+                    <form id="productAvaliable">
+                        <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <button id="changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
+
+                    </form>
+                }
+
             </div>
         </div>
     </div>
-</div>
-} 
-else
+} else
 {
-<div class="col">
-    <div class="card shadow-sm">
-        <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
-        <div class="card-body">
-            <h3 class="fs-2">@Model.Name</h3>
-            <p class="text-body-secondary">@Model.Description</p>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="card-text">@Model.Price.ToString("c")</p>
-                <div class="btn-group">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
-                    }
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <button asp-controller="Home" asp-action="Save" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Сохранить</button>
-                        <button asp-controller="Home" asp-action="ChangeAvaliable" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Есть в наличии</button>
-                    }
-                </div>
+    <div class="col">
+        <div class="card shadow-sm" id="backCard" style="opacity: 0.5">
+            <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
+            <div class="card-body">
+                @if (User.IsInRole("User"))
+                {
+                    <h3 class="fs-2">@Model.Name</h3>
+                    <p class="text-body-secondary">@Model.Description</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="card-text">@Model.Price.ToString("c")</p>
+                        <div class="btn-group">
+                            <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary" style="display: none;">Добавить</button>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <form id="productCardId">
+                        <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 0.6">
+                        <textarea type="text" class="form-control text-body-secondary formColor" asp-for="Description" style="opacity: 0.6"></textarea>
+                        <div class="justify-content-between align-items-center">
+                            <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 0.6">
+                        </div>
+
+                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="saveProductId">Сохранить</button>
+
+                    </form>
+                    <form id="productAvaliable">
+                        <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                        <button id="changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
+
+                    </form>
+                }
+
             </div>
         </div>
     </div>
-</div>
 }
+
+<script>
+    function ChangeColor(avaliableInput) {
+        avaliableInput = document.getElementById("avaliableInput");
+        if (avaliableInput.Value) {
+            document.getElementById("changeAvaliable").textContent = 'Есть в наличии';
+
+            document.getElementById("form1").style.opacity = "0.6";
+            document.getElementById("form2").style.opacity = "0.6";
+            document.getElementById("form3").style.opacity = "0.6";
+            document.getElementById("backCard").style.opacity = "0.4";
+            document.getElementById("backCard").style.backgroundColor = "#e3e3e3;";
+        }
+        else {
+            document.getElementById("changeAvaliable").textContent = 'Нет в наличии';
+
+            document.getElementById("form1").style.opacity = "1";
+            document.getElementById("form2").style.opacity = "1";
+            document.getElementById("form3").style.opacity = "1";
+
+            document.getElementById("backCard").style.opacity = "1";
+            document.getElementById("backCard").style.backgroundColor = "white";
+        }
+    }
+</script>

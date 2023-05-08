@@ -8,7 +8,7 @@
         </a>
 
         <ul class="nav nav-pills">
-            <li class="nav-item"><a href="#" class="nav-link text-dark">Профиль</a></li>
+                <li class="nav-item"><a href="/Account/User" class="nav-link text-dark">Профиль</a></li>
             <li class="nav-item"><a href="#" class="nav-link text-dark">Корзина</a></li>
             <li class="nav-item">
                 <form method="post" asp-controller="Account" asp-action="Logout">
@@ -24,11 +24,8 @@
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             @{
-                var id = 1;
                 foreach (Product product in Model.allProducts)
                 {
-                    ++id;
-                    product.Id = id;
                     @Html.Partial("AllProducts", product)
                 }
             }
@@ -41,4 +38,37 @@
 else
 {
     @Html.Partial("Login", Model.loginViewModel)
+}
+
+@section pageScripts {
+    <script>
+        $('#saveProductId').on('click', function () {
+            const data = $('#productCardId').serialize();
+            $.ajax({
+                url: '@Url.Action("Save")',
+                type: 'POST',
+                data: data,
+
+            });
+        });
+
+        $('#changeAvaliable').on('click', function () {
+            const data = $('#productAvaliable').serialize();
+            $.ajax({
+                url: '@Url.Action("ChangeAvaliable")',
+                type: 'POST',
+                data: data,
+
+            });
+
+            $(this).text(function(i, text) {
+                return text === "Нет в наличии" ? "Есть в наличии" : "Нет в наличии";
+            });
+
+            $(".formColor").css('opacity', $(".formColor").css('opacity') === '1' ? '0.6' : '1');
+
+            $("#backCard").css('opacity', $("#backCard").css('opacity') === '1' ? '0.5' : '1');
+
+        });
+    </script>
 }

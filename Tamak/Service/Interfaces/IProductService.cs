@@ -19,5 +19,9 @@ namespace Tamak.Service.Interfaces
         public Task<IBaseResponse<bool>> DeleteProduct(long id);
 
         public Task<IBaseResponse<Product>> Edit(long id, ProductViewModel model);
+
+        public Task<BaseResponse<Product>> Save(ProductViewModel model);
+
+        public Task<BaseResponse<Product>> ChangeAvaliable(ProductViewModel model);
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 using Tamak.Data.Interfaces;
+using Tamak.Data.Models;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
 
@@ -79,22 +80,9 @@ namespace Tamak.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.Id == 0)
-                {
-                    byte[] imageData;
-                    using (var binaryReader = new BinaryReader(model.Avatar.OpenReadStream()))
-                    {
-                        imageData = binaryReader.ReadBytes((int)model.Avatar.Length);
-                    } 
-                    await _productService.Create(model, imageData);
-                }
-                else
-                {
-                    await _productService.Edit(model.Id, model);
-                }
-                return RedirectToAction("GetProducts");
+                _productService.Save(model);
             }
-            return View();
+            return RedirectToAction("GetProducts");
         }
 
         [HttpPost]

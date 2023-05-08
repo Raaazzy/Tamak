@@ -6,5 +6,7 @@ namespace Tamak.Service.Interfaces
     public interface IUserService
     {
         Task<BaseResponse<IEnumerable<UserViewModel>>> GetUsers();
+
+        public Task<IBaseResponse<ProductViewModel>> GetUser(long id);
     }
 }

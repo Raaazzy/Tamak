@@ -4,11 +4,13 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tamak.Data.Enum;
 using Tamak.Data.Extensions;
 using Tamak.Data.Interfaces;
 using Tamak.Data.Models;
+using Tamak.Data.Repository;
 using Tamak.Data.Response;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
@@ -243,6 +245,66 @@ namespace Automarket.Service.Implementations
                 {
                     Description = $"[GetProducts] : {ex.Message}",
                     StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Product>> Save(ProductViewModel model)
+        {
+            try
+            {
+                var product = await _productRepository.GetAll()
+                    .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+                product.Name = model.Name;
+                /*product.Category = (Category)Enum.Parse(typeof(Category), model.Category);*/
+                product.Description = model.Description;
+                product.Price = model.Price;
+                product.Available = model.Available;
+
+                await _productRepository.Update(product);
+
+                return new BaseResponse<Product>()
+                {
+                    Data = product,
+                    Description = "Данные обновлены",
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Product>()
+                {
+                    StatusCode = StatusCode.InternalServerError,
+                    Description = $"Внутренняя ошибка: {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<BaseResponse<Product>> ChangeAvaliable(ProductViewModel model)
+        {
+            try
+            {
+                var product = await _productRepository.GetAll()
+                    .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+                product.Available = !model.Available;
+
+                await _productRepository.Update(product);
+
+                return new BaseResponse<Product>()
+                {
+                    Data = product,
+                    Description = "Данные обновлены",
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Product>()
+                {
+                    StatusCode = StatusCode.InternalServerError,
+                    Description = $"Внутренняя ошибка: {ex.Message}"
                 };
             }
         }

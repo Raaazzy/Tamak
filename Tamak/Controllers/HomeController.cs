@@ -75,16 +75,16 @@ namespace Tamak.Controllers
         [HttpPost]
         public async Task<IActionResult> Save(ProductViewModel model)
         {
+            ModelState.Remove("Avatar");
+            ModelState.Remove("Img");
+            ModelState.Remove("Category");
+
             if (ModelState.IsValid)
             {
-                if (model.Id == 0)
+                var response = await _productService.Save(model);
+                if (response.StatusCode == Data.Enum.StatusCode.Success)
                 {
-                    byte[] a = { 0 };
-                    await _productService.Create(model, a);
-                }
-                else
-                {
-                    await _productService.Edit(model.Id, model);
+                    return Json(new { data = response.Description });
                 }
             }
             return RedirectToAction("GetProducts");
@@ -93,17 +93,18 @@ namespace Tamak.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeAvaliable(ProductViewModel model)
         {
+            ModelState.Remove("Avatar");
+            ModelState.Remove("Img");
+            ModelState.Remove("Category");
+            ModelState.Remove("Name");
+            ModelState.Remove("Description");
+            ModelState.Remove("Category");
             if (ModelState.IsValid)
             {
-                if (model.Id == 0)
+                var response = await _productService.ChangeAvaliable(model);
+                if (response.StatusCode == Data.Enum.StatusCode.Success)
                 {
-                    byte[] a = { 0 };
-                    await _productService.Create(model, a);
-                }
-                else
-                {
-                    model.Available = !model.Available;
-                    await _productService.Edit(model.Id, model);
+                    return Json(new { data = response.Description });
                 }
             }
             return RedirectToAction("GetProducts");
