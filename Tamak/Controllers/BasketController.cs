@@ -25,7 +25,11 @@ namespace Tamak.Controllers
             {
                 response = await _basketService.GetItems(User.Identity.Name);
             }
-            return View(response.Data.ToList());
+            if (response.StatusCode == Data.Enum.StatusCode.Success)
+            {
+                return View(response.Data.ToList());
+            }
+            return View(null);
         }
 
         [HttpGet]

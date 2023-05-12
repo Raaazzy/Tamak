@@ -107,42 +107,6 @@ namespace Tamak.Service.Implementations
                     };
                 }
 
-                var basket = _basketRepository.GetAll();
-                var users = _userRepository.GetAll();
-                var assortiments = _assortimentRepository.GetAll();
-                var times = _timeRepository.GetAll();
-
-                foreach (var b in basket)
-                {
-                    if (b.Id == order.BasketId)
-                    {
-                        foreach (var u in users)
-                        {
-                            if (u.Id == b.UserId)
-                            {
-                                foreach (var a in assortiments)
-                                {
-                                    if (a.UserId == u.Id)
-                                    {
-                                        foreach (var t in times) 
-                                        { 
-                                            if (t.AssortimentId == a.Id && t.StringData == order.OrderDate)
-                                            {
-                                                t.Avaliable= true;
-                                                await _timeRepository.Update(t);
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-
                 await _orderRepository.Delete(order);
                 return new BaseResponse<bool>()
                 {
@@ -177,6 +141,28 @@ namespace Tamak.Service.Implementations
                 } 
                 else
                 {
+                    var users = _userRepository.GetAll();
+                    var assortiments = _assortimentRepository.GetAll();
+
+                    foreach (var u in users)
+                    {
+                        if (u.Email == order.ShopEmail)
+                        {
+                            foreach (var a in assortiments)
+                            {
+                                if (a.UserId == u.Id)
+                                {
+                                    var time = await _timeRepository.GetAll().FirstOrDefaultAsync(x => x.AssortimentId == a.Id && x.StringData == order.OrderDate);
+                                    time.Avaliable = true;
+                                    await _timeRepository.Update(time);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+
                     Delete(id);
                     return new BaseResponse<Order>()
                     {

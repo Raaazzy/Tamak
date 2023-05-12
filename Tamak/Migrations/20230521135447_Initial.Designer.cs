@@ -12,7 +12,7 @@ using Tamak.Data;
 namespace Tamak.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20230520180122_Initial")]
+    [Migration("20230521135447_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

@@ -31,7 +31,7 @@
 </div>
 
 
-<div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
+<div style="background-color: #f2f2f2; min-height: 666px;" class="album py-5">
         @if (Model.currentUserId == 0)
         {
             <div class="container" id="shopList">
@@ -91,7 +91,7 @@
                         }
                         if (!flag)
                         {
-                            <div class="row rounded-4 w-100 align-items-center" style="height: 400px;">
+                            <div class="row rounded-4 w-100 align-items-center" style="height: 500px;">
                                 <div class="container-fluid py-3">
                                     <center>
                                         <h3>Упс, а предприятий еще нет...</h3>
@@ -109,47 +109,50 @@
                     </form>
                 }
             </div>
-        } else
+        } 
+        else
         {
             <div class="container" id="foodList">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                @{
-                    if (Model.allAssortiments.Any())
-                    {
-                        @foreach (Assortiment assortiment in Model.allAssortiments)
+                    @{
+                        if (Model.allAssortiments != null &&  Model.allAssortiments.Any())
                         {
-                            @if (assortiment.UserId == Model.currentUserId)
+                            @foreach (Assortiment assortiment in Model.allAssortiments)
                             {
-                                @if (Model.allAllProducts.Any())
+                                @if (assortiment.UserId == Model.currentUserId)
                                 {
-                                    @foreach (Product product in Model.allAllProducts)
+                                    @if (Model.allAllProducts.Any())
                                     {
-                                        @if (product.AssortimentId == assortiment.Id)
+                                        @foreach (Product product in Model.allAllProducts)
                                         {
-                                            @Html.Partial("AllProducts", product)
+                                            @if (product.AssortimentId == assortiment.Id)
+                                            {
+                                                @Html.Partial("AllProducts", product)
+                                            }
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    <center>
-                                        <div class="d-flex align-items-center">
-                                            <h3>Упс, а еда тут еще не появилась...</h3>
-                                        </div>
-                                    </center>
+                                    else
+                                    {
+                                        <center>
+                                            <div class="d-flex align-items-center">
+                                                <h3>Упс, а еда тут еще не появилась...</h3>
+                                            </div>
+                                        </center>
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        <center>
-                            <div class="d-flex align-items-center">
-                                <h3>Упс, а магазинов здесь еще нет...</h3>
+                        else
+                        {
+                            <div class="row rounded-4 w-100 align-items-center" style="height: 500px;">
+                                <div class="container-fluid py-3">
+                                    <center>
+                                        <h3>Упс, у этого предприятия еще нет меню...</h3>
+                                    </center>
+                                </div>
                             </div>
-                        </center>
+                        }
                     }
-                }
                 </div>
             </div>
         }

@@ -25,14 +25,21 @@
     </header>
 </div>
 
+@{
+    int height = 570;
+    if (User.IsInRole("User"))
+    {
+        height = 470;
+    }
+}
 
 <div style="background-color: #f2f2f2" class="album py-5">
     <div style="height: 570px;" class="container col-3 d-flex align-items-center">
         <div class="form-signin w-100 m-auto">
 
             <form id="UserId">
-                <p id="vis1" style="display: block; visibility: hidden;">@Model.City</p>
-                <p id="vis2" style="display: block; visibility: hidden;">@Model.Campus</p>
+                <p id="vis1" style="display: none;">@Model.City</p>
+                <p id="vis2" style="display: none;">@Model.Campus</p>
 
                 <div class="col-12">
                     <label for="Email" class="form-label">Почта</label>

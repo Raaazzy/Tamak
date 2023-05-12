@@ -27,25 +27,27 @@
 
 @if (Model == null || Model.Count == 0)
 {
-    <div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
-        <div class="container my-3">
-            <center>
-                <div class="d-flex align-items-center">
+    <div style="background-color: #f2f2f2; min-height: 666px;" class="album py-5">
+
+        <div class="row rounded-4 w-100 align-items-center" style="height: 500px;">
+            <div class="container-fluid py-3">
+                <center>
                     @if (User.IsInRole("Admin"))
                     {
                         <h3>У вас пока нет заказов</h3>
-                    } else
+                    }
+                    else
                     {
                         <h3>Сделайте заказ, чтобы здесь что-нибудь появилось</h3>
                     }
-                </div>
-            </center>
+                </center>
+            </div>
         </div>
     </div>
 }
 else
 {
-    <div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
+    <div style="background-color: #f2f2f2; min-height: 666px;" class="album py-5">
         @foreach (var item in Model)
         {
             <div class="container my-3">
