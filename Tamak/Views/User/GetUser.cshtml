@@ -2,13 +2,20 @@
 
 <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <a href="/Home/GetAssortiment" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none" onclick="">
             <span class="fs-2 text-primary" style="font-weight:700">Tamak</span>
         </a>
 
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="/User/GetUser" class="nav-link text-dark">Профиль</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark">Корзина</a></li>
+            @if (User.IsInRole("User"))
+            {
+                <a href="/Basket/Detail" class="nav-link text-dark">Корзина</a>
+            }
+            else
+            {
+                <a href="/Basket/Detail" class="nav-link text-dark">Список заказов</a>
+            }
             <li class="nav-item">
                 <form method="post" asp-controller="Account" asp-action="Logout">
                     <input class="nav-link text-dark" type="submit" value="Выйти" />

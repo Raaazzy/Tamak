@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 using Tamak.Data.Interfaces;
+using Tamak.Data.Models;
 using Tamak.Service.Implementations;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
@@ -13,6 +15,7 @@ namespace Tamak.Controllers
         private readonly IProductService _productService;
         private readonly IAssortimentService _assortimentService;
         private readonly IUserService _userService;
+        private static long UserId = 0;
 
         public HomeController(IProductService productService, IAssortimentService assortimentService, IUserService userService)
         {
@@ -24,16 +27,19 @@ namespace Tamak.Controllers
         [HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
+            var response0 = _productService.GetProducts();
             var response = await _assortimentService.GetItems(User.Identity.Name);
-
             var response2 = await _userService.GetUsers();
+            var response3 = _assortimentService.GetAssortiments();
 
-            //var response3 = await _assortimentService.GetItems(User.Identity.Name);
-
-            if (response.StatusCode == Data.Enum.StatusCode.Success)
+            if (response0.StatusCode == Data.Enum.StatusCode.Success && response.StatusCode == Data.Enum.StatusCode.Success && response2.StatusCode == Data.Enum.StatusCode.Success && response3.StatusCode == Data.Enum.StatusCode.Success)
             {
                 HomeViewModel obj = new HomeViewModel();
+                obj.allAllProducts = response0.Data;
                 obj.allProducts = response.Data;
+                obj.allUsers = response2.Data;
+                obj.allAssortiments = response3.Data;
+                obj.currentUserId = UserId;
                 return View(obj);
 
             }
@@ -130,6 +136,13 @@ namespace Tamak.Controllers
                 return RedirectToAction("Index");
             }
             return RedirectToAction("GetProducts");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAssortiment(HomeViewModel user)
+        {
+            UserId = user.currentUserId;
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,21 +1,24 @@
 ﻿@model HomeViewModel
 
 @if (User.Identity.IsAuthenticated) {
-<div class="container">
+    <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <span class="fs-2 text-primary" style="font-weight:700">Tamak</span>
-        </a>
-
+            <form id="0-assortiment" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <input asp-for="currentUserId" value="0" name="currentUserId" type="radio" class="form-check-input" checked="" required="" style="display:none">
+                <div onclick='foodClick("#0-assortiment");' type="button">
+                    <span class="fs-2 text-primary" style="font-weight:700">Tamak</span>
+                </div>
+            </form>
+            
         <ul class="nav nav-pills">
                 <li class="nav-item"><a href="/User/GetUser" class="nav-link text-dark">Профиль</a></li>
                 <li class="nav-item">
                     @if (User.IsInRole("User"))
                     {
-                        <a href="#" class="nav-link text-dark">Корзина</a>
+                        <a href="/Basket/Detail" class="nav-link text-dark">Корзина</a>
                     } else
                     {
-                        <a href="#" class="nav-link text-dark">Список заказов</a>
+                        <a href="/Basket/Detail" class="nav-link text-dark">Список заказов</a>
                     }
                 </li>
                 <li class="nav-item">
@@ -28,21 +31,32 @@
 </div>
 
 
-<div style="background-color: #f2f2f2" class="album py-5">
-    <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+<div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
+        @if (Model.currentUserId == 0)
+        {
+            <div class="container" id="shopList">
                 @{
                     if (User.IsInRole("Admin"))
                     {
-                        if (Model.allProducts == null)
+                        @if (Model.allProducts == null || !Model.allProducts.Any())
                         {
-                            <div class="col-lg-3 d-flex align-items-center">
-                                <h3>Упс, а еда тут еще не появилась...</h3>
+                            <div class="row rounded-4 w-100 align-items-center" style="height: 500px;">
+                                <div class="container-fluid py-3">
+                                    <center>
+                                        <h3>Упс, а еда тут еще не появилась...</h3>
+                                    </center>
+                                </div>
                             </div>
                         }
-                        foreach (Product product in Model.allProducts)
+                        else
                         {
-                            @Html.Partial("AllProducts", product)
+                            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                                @foreach (Product product in Model.allProducts)
+                                {
+                                    @Html.Partial("AllProducts", product)
+                                }
+                            </div>
+
                         }
 
                     }
@@ -55,31 +69,91 @@
                             {
                                 flag = true;
 
-                                <div class="border col-12">
-                                    <h3>Название: @user.Name.ToString()</h3>
-                                    <p>Город: @user.City.ToString()</p>
-                                </div>
+                                <form id="@user.Id-assortiment">
+                                    <input asp-for="currentUserId" value="@user.Id" name="currentUserId" type="radio" class="form-check-input" checked="" required="" style="display:none">
+
+                                    <div class="row rounded-4 w-100 my-4" style="background-color: white;" id="foodList-@user.Id" onclick='foodClick("#@user.Id-assortiment");' type="button">
+                                        <div class="container-fluid p-3">
+                                            <h3 class="fs-3 mx-5" style="font-weight:700">@user.Name.ToString()</h3>
+
+                                            @if (user.City.ToString() == "Moscow")
+                                            {
+                                                <p class="mx-5">@user.City.ToString(), @user.Campus.ToString()</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="mx-5">@user.City.ToString()</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </form>
                             }
                         }
                         if (!flag)
                         {
-                            <div class="col-lg-3 d-flex align-items-center">
-                                <h3>Упс, а еда тут еще не появилась....</h3>
+                            <div class="row rounded-4 w-100 align-items-center" style="height: 400px;">
+                                <div class="container-fluid py-3">
+                                    <center>
+                                        <h3>Упс, а предприятий еще нет...</h3>
+                                    </center>
+                                </div>
                             </div>
                         }
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
                     }
                 }
-        </div>
-            @if (User.IsInRole("Admin"))
-            {
-                <form asp-controller="Home" asp-action="Add">
-                    <button class="w-100 btn btn-primary" type="submit">Добавить продукт</button>
-                </form>
-            }
-        </div>
-</div>
-
-
+                @if (User.IsInRole("Admin"))
+                {
+                    <form asp-controller="Home" asp-action="Add">
+                        <button class="w-100 btn btn-primary mt-4" type="submit">Добавить продукт</button>
+                    </form>
+                }
+            </div>
+        } else
+        {
+            <div class="container" id="foodList">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                @{
+                    if (Model.allAssortiments.Any())
+                    {
+                        @foreach (Assortiment assortiment in Model.allAssortiments)
+                        {
+                            @if (assortiment.UserId == Model.currentUserId)
+                            {
+                                @if (Model.allAllProducts.Any())
+                                {
+                                    @foreach (Product product in Model.allAllProducts)
+                                    {
+                                        @if (product.AssortimentId == assortiment.Id)
+                                        {
+                                            @Html.Partial("AllProducts", product)
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <center>
+                                        <div class="d-flex align-items-center">
+                                            <h3>Упс, а еда тут еще не появилась...</h3>
+                                        </div>
+                                    </center>
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <center>
+                            <div class="d-flex align-items-center">
+                                <h3>Упс, а магазинов здесь еще нет...</h3>
+                            </div>
+                        </center>
+                    }
+                }
+                </div>
+            </div>
+        }
+    </div>
 }
 else
 {
@@ -98,23 +172,42 @@ else
             });
         }
 
-        $('#changeAvaliable').on('click', function () {
-            const data = $('#productAvaliable').serialize();
+        
+
+        function foodClick(userId) {
+            
+            const data = $(userId).serialize();
+            $.ajax({
+                url: '@Url.Action("GetAssortiment")',
+                type: 'GET',
+                data: data,
+                success: function() {
+                    window.location.reload();
+                },
+            });
+        }
+
+        function clickAvaliable(str, str2, str3, str4) {
+            const data = $(str).serialize();
             $.ajax({
                 url: '@Url.Action("ChangeAvaliable")',
                 type: 'POST',
                 data: data,
-
             });
+            
 
-            $(this).text(function (i, text) {
-                return text === "Нет в наличии" ? "Есть в наличии" : "Нет в наличии";
-            });
+            $(str3).css('opacity', $(str3).css('opacity') === '1' ? '0.6' : '1');
 
-            $(".formColor").css('opacity', $(".formColor").css('opacity') === '1' ? '0.6' : '1');
+            $(str2).css('opacity', $(str2).css('opacity') === '1' ? '0.5' : '1');
 
-            $("#backCard").css('opacity', $("#backCard").css('opacity') === '1' ? '0.5' : '1');
 
-        });
+            if (document.getElementById(str4).textContent === "Нет в наличии") {
+                document.getElementById(str4).textContent  = "Есть в наличии";
+            } else {
+                document.getElementById(str4).textContent = "Нет в наличии";
+            }
+        }
+
+        
     </script>
 }

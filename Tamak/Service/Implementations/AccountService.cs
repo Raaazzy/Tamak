@@ -4,6 +4,7 @@ using Tamak.Data.Enum;
 using Tamak.Data.Helpers;
 using Tamak.Data.Interfaces;
 using Tamak.Data.Models;
+using Tamak.Data.Repository;
 using Tamak.Data.Response;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
@@ -13,13 +14,16 @@ namespace Tamak.Service.Implementations
     public class AccountService : IAccountService
     {
         private readonly IBaseRepository<User> _userRepository;
+        private readonly IBaseRepository<Assortiment> _assortimentRepository;
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(IBaseRepository<User> userRepository,
-            ILogger<AccountService> logger)
+            ILogger<AccountService> logger,
+            IBaseRepository<Assortiment> assortimentRepository)
         {
             _userRepository = userRepository;
             _logger = logger;
+            _assortimentRepository = assortimentRepository;
         }
 
         public async Task<BaseResponse<ClaimsIdentity>> Register(RegisterViewModel model)
@@ -34,6 +38,8 @@ namespace Tamak.Service.Implementations
                         Description = "Пользователь с такой почтой уже существует",
                     };
                 }
+
+                
 
                 user = new User()
                 {

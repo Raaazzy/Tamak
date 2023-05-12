@@ -11,5 +11,9 @@ namespace Tamak.Service.Interfaces
         Task<IBaseResponse<Product>> GetItem(string userName, long id);
 
         public Task<IBaseResponse<Product>> Add(string userName);
+
+        public IBaseResponse<List<Assortiment>> GetAssortiments();
+
+        public IBaseResponse<List<Time>> GetTimes();
     }
 }

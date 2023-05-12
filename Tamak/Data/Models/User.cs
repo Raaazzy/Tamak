@@ -21,5 +21,7 @@ namespace Tamak.Data.Models
 
         public Assortiment Assortiment { set; get; }
 
+        public Basket Basket { get; set; }
+
     }
 }

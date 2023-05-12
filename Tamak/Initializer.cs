@@ -15,8 +15,9 @@ namespace Tamak
             services.AddScoped<IBaseRepository<Product>, ProductRepository>();
             services.AddScoped<IBaseRepository<User>, UserRepository>();
             services.AddScoped<IBaseRepository<Assortiment>, AssortimentRepository>();
-            /*services.AddScoped<IBaseRepository<Basket>, BasketRepository>();
-            services.AddScoped<IBaseRepository<Order>, OrderRepository>();*/
+            services.AddScoped<IBaseRepository<Basket>, BasketRepository>();
+            services.AddScoped<IBaseRepository<Order>, OrderRepository>();
+            services.AddScoped<IBaseRepository<Time>, TimeRepository>();
         }
 
         public static void InitializeServices(this IServiceCollection services)
@@ -25,8 +26,8 @@ namespace Tamak
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAssortimentService, AssortimentService>();
-            /*services.AddScoped<IBasketService, BasketService>();
-            services.AddScoped<IOrderService, OrderService>();*/
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IOrderService, OrderService>();
         }
     }
 }

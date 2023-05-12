@@ -48,6 +48,25 @@ namespace Tamak.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Baskets",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Baskets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Baskets_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -74,20 +93,50 @@ namespace Tamak.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "User",
-                columns: new[] { "Id", "Campus", "City", "Email", "Name", "Password", "Role" },
-                values: new object[] { 1L, 0, 0, "Test@edu.hse.ru", "Test1", "8a863b145dc6e4ed7ac41c08f7536c476ebac7509e028ed2b49f8bd5a3562b9f", 2 });
+            migrationBuilder.CreateTable(
+                name: "Times",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StringData = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NumData = table.Column<int>(type: "int", nullable: false),
+                    Avaliable = table.Column<bool>(type: "bit", nullable: false),
+                    AssortimentId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Times", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Times_Assortiments_AssortimentId",
+                        column: x => x.AssortimentId,
+                        principalTable: "Assortiments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
-            migrationBuilder.InsertData(
-                table: "Assortiments",
-                columns: new[] { "Id", "UserId" },
-                values: new object[] { 1L, 1L });
-
-            migrationBuilder.InsertData(
-                table: "Products",
-                columns: new[] { "Id", "AssortimentId", "Available", "Avatar", "Category", "CategoryId", "Description", "Img", "Name", "Price" },
-                values: new object[] { 1L, 1L, true, null, 0, 0, "Свежий кофе с молочным оттенком", null, "Латте", 200m });
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<long>(type: "bigint", nullable: true),
+                    OrderDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    BasketId = table.Column<long>(type: "bigint", nullable: false),
+                    ShopEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Baskets_BasketId",
+                        column: x => x.BasketId,
+                        principalTable: "Baskets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assortiments_UserId",
@@ -96,8 +145,24 @@ namespace Tamak.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Baskets_UserId",
+                table: "Baskets",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_BasketId",
+                table: "Orders",
+                column: "BasketId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_AssortimentId",
                 table: "Products",
+                column: "AssortimentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Times_AssortimentId",
+                table: "Times",
                 column: "AssortimentId");
         }
 
@@ -105,7 +170,16 @@ namespace Tamak.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Times");
+
+            migrationBuilder.DropTable(
+                name: "Baskets");
 
             migrationBuilder.DropTable(
                 name: "Assortiments");

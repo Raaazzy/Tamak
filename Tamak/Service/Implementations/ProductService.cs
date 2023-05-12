@@ -260,7 +260,6 @@ namespace Automarket.Service.Implementations
                     .FirstOrDefaultAsync(x => x.Id == model.Id);
 
                 product.Name = model.Name;
-                /*product.Category = (Category)Enum.Parse(typeof(Category), model.Category);*/
                 product.Description = model.Description;
                 product.Price = model.Price;
                 product.Available = model.Available;

@@ -3,7 +3,7 @@
 @if (Model.Available.ToString() == "True")
 {
     <div class="col">
-        <div class="card shadow-sm" id="backCard" style="opacity: 1">
+        <div class="card shadow-sm" id="@Model.Id-backCard" style="opacity: 1">
             <img class="bd-placeholder-img mx-auto" width="210" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
             <div class="card-body">
                 @if (User.IsInRole("User"))
@@ -13,7 +13,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="card-text">@Model.Price.ToString("c")</p>
                         <div class="btn-group">
-                            <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</button>
+                            <a asp-controller="Order" asp-action="CreateOrder" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary">Добавить</a>
                         </div>
                     </div>
                 }
@@ -22,10 +22,10 @@
                     <form id="@Model.Id-productCardId">
                         <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 1">
-                        <textarea type="text" class="form-control text-body-secondary formColor" asp-for="Description" style="opacity: 1"></textarea>
+                        <input type="text" class="form-control fs-2 @Model.Id-formColor" asp-for="Name" style="opacity: 1">
+                        <textarea type="text" class="form-control text-body-secondary @Model.Id-formColor" asp-for="Description" style="opacity: 1"></textarea>
                         <div class="justify-content-between align-items-center">
-                            <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 1">
+                            <input type="text" class="form-control card-text @Model.Id-formColor" asp-for="Price" style="opacity: 1">
                         </div>
 
                         <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="@Model.Id-saveProductId" onclick='ckick("#@Model.Id-productCardId");'>Сохранить</button>
@@ -34,7 +34,7 @@
                     <form id="@Model.Id-productAvaliable">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
+                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary" onclick='clickAvaliable("#@Model.Id-productAvaliable", "#@Model.Id-backCard", ".@Model.Id-formColor", "@Model.Id-changeAvaliable");'>Есть в наличии</button>
                     </form>
                 }
 
@@ -44,8 +44,8 @@
 } else
 {
     <div class="col">
-        <div class="card shadow-sm" id="backCard" style="opacity: 0.5">
-            <img class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
+        <div class="card shadow-sm" id="@Model.Id-backCard" style="opacity: 0.5">
+            <img class="bd-placeholder-img mx-auto" width="210" height="225" role="img" preserveAspectRatio="xMidYMid slice" focusable="false" src="https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp" />
             <div class="card-body">
                 @if (User.IsInRole("User"))
                 {
@@ -54,7 +54,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="card-text">@Model.Price.ToString("c")</p>
                         <div class="btn-group">
-                            <button asp-controller="ShopCart" asp-action="Add" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary" style="display: none;">Добавить</button>
+                            <a asp-controller="Order" asp-action="CreateOrder" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-primary" style="display: none;">Добавить</a>
                         </div>
                     </div>
                 }
@@ -63,10 +63,10 @@
                     <form id="@Model.Id-productCardId">
                         <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 0.6">
-                        <textarea type="text" class="form-control text-body-secondary formColor" asp-for="Description" style="opacity: 0.6"></textarea>
+                        <input type="text" class="form-control fs-2 @Model.Id-formColor" asp-for="Name" style="opacity: 0.6">
+                        <textarea type="text" class="form-control text-body-secondary @Model.Id=formColor" asp-for="Description" style="opacity: 0.6"></textarea>
                         <div class="justify-content-between align-items-center">
-                            <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 0.6">
+                            <input type="text" class="form-control card-text @Model.Id-formColor" asp-for="Price" style="opacity: 0.6">
                         </div>
 
                         <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="@Model.Id-saveProductId">Сохранить</button>
@@ -75,7 +75,7 @@
                     <form id="@Model.Id-productAvaliable">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
+                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary" onclick='clickAvaliable("#@Model.Id-productAvaliable", "#@Model.Id-backCard", ".@Model.Id-formColor", "@Model.Id-changeAvaliable");'>Есть в наличии</button>
 
                     </form>
                 }

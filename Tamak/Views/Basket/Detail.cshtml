@@ -1,0 +1,117 @@
+﻿@model List<OrderViewModel>
+
+<div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3">
+        <a href="/Home/GetAssortiment" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+            <span class="fs-2 text-primary" style="font-weight:700">Tamak</span>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a href="/User/GetUser" class="nav-link text-dark">Профиль</a></li>
+            @if (User.IsInRole("User"))
+            {
+                <a href="/Basket/Detail" class="nav-link text-dark">Корзина</a>
+            }
+            else
+            {
+                <a href="/Basket/Detail" class="nav-link text-dark">Список заказов</a>
+            }
+            <li class="nav-item">
+                <form method="post" asp-controller="Account" asp-action="Logout">
+                    <input class="nav-link text-dark" type="submit" value="Выйти" />
+                </form>
+            </li>
+        </ul>
+    </header>
+</div>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
+        <div class="container my-3">
+            <center>
+                <div class="d-flex align-items-center">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <h3>У вас пока нет заказов</h3>
+                    } else
+                    {
+                        <h3>Сделайте заказ, чтобы здесь что-нибудь появилось</h3>
+                    }
+                </div>
+            </center>
+        </div>
+    </div>
+}
+else
+{
+    <div style="background-color: #f2f2f2; min-height: 620px;" class="album py-5">
+        @foreach (var item in Model)
+        {
+            <div class="container my-3">
+                <div class="p-3 bg-body rounded shadow-sm row">
+                    @if (User.IsInRole("User"))
+                    {
+                        <div class="d-flex text-body-secondary col-9">
+                            <div class="mb-0 small lh-sm w-100">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="text-gray-dark"><strong>@item.ProductName</strong></h5>
+                                </div>
+                                @if (@item.City == "Москва")
+                                {
+                                    <span class="d-block">@item.City, @item.Campus, @item.OrderDate</span>
+                                }
+                                else
+                                {
+                                    <span class="d-block">@item.City, @item.OrderDate</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="d-flex text-body-secondary col-3 align-items-center d-flex justify-content-end">
+                            @if (@item.Status == "В обработке")
+                            {
+                                <span class="btn btn-sm" style="background-color: #f97373; cursor: default">@item.Status</span>
+                            }
+                            else if (@item.Status == "Принят в работу")
+                            {
+                                <span class="btn btn-sm" style="background-color: #ffd769; cursor: default">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span class="btn btn-sm" style="background-color: #94eb91; cursor: default">@item.Status</span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex text-body-secondary col-9">
+                            <div class="mb-0 small lh-sm w-100">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="text-gray-dark"><strong>@item.ProductName</strong></h5>
+                                </div>
+                                <span class="d-block">@item.OrderDate</span>
+                            </div>
+                        </div>
+                        <div class="d-flex text-body-secondary col-3 align-items-center d-flex justify-content-end">
+                            <div class="btn-group">
+                                @if (@item.Status == "В обработке")
+                                {
+                                    <a asp-controller="Order" asp-action="ChangeStatus" asp-route-id="@item.Id" type="button" class="btn btn-sm"style="background-color: #f97373">@item.Status</a>
+                                }
+                                else if (@item.Status == "Принят в работу")
+                                {
+                                    <a asp-controller="Order" asp-action="ChangeStatus" asp-route-id="@item.Id" type="button" class="btn btn-sm" style="background-color: #ffd769">@item.Status</a>
+                                } 
+                                else
+                                {
+                                    <a asp-controller="Order" asp-action="ChangeStatus" asp-route-id="@item.Id" type="button" class="btn btn-sm" style="background-color: #94eb91">@item.Status</a>
+                                }
+                            </div>
+                        </div>
+                        
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

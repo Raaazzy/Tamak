@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Data.Entity.Core.Mapping;
 using Tamak.Data.Enum;
 using Tamak.Data.Interfaces;
 using Tamak.Data.Models;
@@ -12,11 +15,15 @@ namespace Tamak.Service.Implementations
     {
         private readonly IBaseRepository<User> _userRepository;
         private readonly IBaseRepository<Product> _productRepository;
+        private readonly IBaseRepository<Assortiment> _assortimentRepository;
+        private readonly IBaseRepository<Time> _timeRepository;
 
-        public AssortimentService(IBaseRepository<User> userRepository, IBaseRepository<Product> productRepository)
+        public AssortimentService(IBaseRepository<User> userRepository, IBaseRepository<Product> productRepository, IBaseRepository<Assortiment> assortimentRepository, IBaseRepository<Time> timeRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
+            _assortimentRepository = assortimentRepository;
+            _timeRepository = timeRepository;
         }
 
         public async Task<IBaseResponse<IEnumerable<Product>>> GetItems(string userName)
@@ -109,13 +116,71 @@ namespace Tamak.Service.Implementations
             }
         }
 
+        public IBaseResponse<List<Assortiment>> GetAssortiments()
+        {
+            try
+            {
+                var assortiments = _assortimentRepository.GetAll().ToList();
+                if (!assortiments.Any())
+                {
+                    return new BaseResponse<List<Assortiment>>()
+                    {
+                        Description = "Найдено 0 элементов",
+                        StatusCode = StatusCode.Success
+                    };
+                }
+
+                return new BaseResponse<List<Assortiment>>()
+                {
+                    Data = assortiments,
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Assortiment>>()
+                {
+                    Description = $"[GetAssortiments] : {ex.Message}",
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public IBaseResponse<List<Time>> GetTimes()
+        {
+            try
+            {
+                var times = _timeRepository.GetAll().ToList();
+                if (!times.Any())
+                {
+                    return new BaseResponse<List<Time>>()
+                    {
+                        Description = "Найдено 0 элементов",
+                        StatusCode = StatusCode.Success
+                    };
+                }
+
+                return new BaseResponse<List<Time>>()
+                {
+                    Data = times,
+                    StatusCode = StatusCode.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Time>>()
+                {
+                    Description = $"[GetTimes] : {ex.Message}",
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
         public async Task<IBaseResponse<Product>> Add(string userName)
         {
             try
             {
                 var user = await _userRepository.GetAll()
-                    .Include(x => x.Assortiment)
-                    .ThenInclude(x => x.Products)
                     .FirstOrDefaultAsync(x => x.Email == userName);
 
                 if (user == null)
@@ -125,6 +190,38 @@ namespace Tamak.Service.Implementations
                         Description = "Пользователь не найден",
                         StatusCode = StatusCode.UserNotFound
                     };
+                }
+
+                if (user.Assortiment == null)
+                {
+                    var assort = new Assortiment
+                    {
+                        User = user,
+                        UserId = user.Id,
+                        Products = new List<Product>(),
+                        Times = new List<Time>()
+                    };
+                    
+                    await _assortimentRepository.Create(assort);
+                    user.Assortiment = assort;
+
+                    for (int i = 9; i < 18; i++)
+                    {
+                        for (int j = 0; j < 60; j += 15)
+                        {
+                            string k = j % 60 == 0 ? "00" : $"{j % 60}";
+                            var time = new Time()
+                            {
+                                StringData = $"{i}:{k}",
+                                NumData = i * 100 + (j % 60),
+                                Avaliable = true,
+                                AssortimentId = user.Id,
+                                Assortiment = assort
+                            };
+                            await _timeRepository.Create(time);
+                            assort.Times.Add(time);
+                        }
+                    }
                 }
 
                 var product = new Product()
