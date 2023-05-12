@@ -19,6 +19,5 @@ namespace Tamak.Data.Models
 
         public Role Role { get; set; }
 
-        public Profile Profile { get; set; }
     }
 }

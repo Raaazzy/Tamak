@@ -25,9 +25,10 @@ namespace Tamak.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetUser(int id)
+        public async Task<ActionResult> GetUser()
         {
-            var response = await _userService.GetUser(id);
+            var userEmail = User.Identity.Name;
+            var response = await _userService.GetUser(userEmail);
             if (response.StatusCode == Data.Enum.StatusCode.Success)
             {
                 return View(response.Data);
@@ -35,15 +36,27 @@ namespace Tamak.Controllers
             return RedirectToAction("Error");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUser(int id, bool isJson)
+        [HttpPost]
+        public async Task<IActionResult> Save(UserViewModel model)
         {
-            var response = await _userService.GetUser(id);
-            if (isJson)
+            ModelState.Remove("Role");
+            ModelState.Remove("Id");
+            if (User.IsInRole("User"))
             {
-                return Json(response.Data);
+                ModelState.Remove("Campus");
+            } else if (User.IsInRole("Admin") && model.City != "Moscow")
+            {
+                model.Campus = "None";
             }
-            return PartialView("GetUser", response.Data);
+            if (ModelState.IsValid)
+            {
+                var response = await _userService.Save(model);
+                if (response.StatusCode == Data.Enum.StatusCode.Success)
+                {
+                    return Json(new { data = response.Description });
+                }
+            }
+            return RedirectToAction("GetProducts");
         }
     }
 }

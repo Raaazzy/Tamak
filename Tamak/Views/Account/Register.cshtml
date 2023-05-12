@@ -43,11 +43,10 @@
                     </div>
                 </div>
 
-                <input asp-for="Campus" value="None" name="Campus" type="radio" class="form-check-input" checked="" required="" style="display:none">
                 <div class="col-12" id="adminBlock2" style="display: none;">
                     <label for="Campus" class="form-label">Корпус</label>
                     <select asp-for="Campus" class="form-select" id="campus" required="">
-                        <option value="">Выберите...</option>
+                        <option value="None" id="noneOption">Выберите...</option>
                         <option value="Pokrovka">Покровский бульвар</option>
                         <option value="Shabolovka">Шаболовка</option>
                         <option value="Strogino">Строгино</option>
@@ -77,6 +76,7 @@
                         Вы ввели неверный пароль
                     </div>
                 </div>
+
                 <a href="/" type="button" class="float-left">Логин</a>
                 <button class="w-100 btn btn-primary" type="submit">Зарегистрироваться</button>
             </div>
@@ -91,11 +91,13 @@
             document.getElementById("adminBlock1").style.display = "block";
             document.getElementById("adminBlock2").style.display = "block";
             document.getElementById("userBlock").style.display = "none";
+            document.getElementById("noneOption").value = "";
         }
         else{
             document.getElementById("adminBlock1").style.display = "none";
             document.getElementById("adminBlock2").style.display = "none";
             document.getElementById("userBlock").style.display = "block";
+            document.getElementById("noneOption").value = "None";
         }
     }
 </script>

@@ -1,4 +1,5 @@
-﻿using Tamak.Data.Response;
+﻿using Tamak.Data.Models;
+using Tamak.Data.Response;
 using Tamak.ViewModels;
 
 namespace Tamak.Service.Interfaces
@@ -7,6 +8,8 @@ namespace Tamak.Service.Interfaces
     {
         Task<BaseResponse<IEnumerable<UserViewModel>>> GetUsers();
 
-        public Task<IBaseResponse<ProductViewModel>> GetUser(long id);
+        public Task<IBaseResponse<UserViewModel>> GetUser(string id);
+
+        public Task<BaseResponse<User>> Save(UserViewModel model);
     }
 }
