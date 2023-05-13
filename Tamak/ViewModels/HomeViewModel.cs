@@ -9,7 +9,7 @@ namespace Tamak.ViewModels
 
         public IEnumerable<Assortiment> allAssortiments { get; set; }
 
-        public IEnumerable<User> allusers { get; set; }
+        public IEnumerable<User> allUsers { get; set; }
 
         public Assortiment assortiment { get; set; }
 
