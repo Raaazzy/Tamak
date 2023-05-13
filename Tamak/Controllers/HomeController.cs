@@ -28,7 +28,7 @@ namespace Tamak.Controllers
 
             var response2 = await _userService.GetUsers();
 
-            var response3 = await _assortimentService.GetItems();
+            //var response3 = await _assortimentService.GetItems(User.Identity.Name);
 
             if (response.StatusCode == Data.Enum.StatusCode.Success)
             {
