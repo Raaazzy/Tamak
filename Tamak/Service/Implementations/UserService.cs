@@ -19,22 +19,22 @@ namespace Tamak.Service.Implementations
             _userRepository = userRepository;
         }
 
-        public async Task<BaseResponse<IEnumerable<UserViewModel>>> GetUsers()
+        public async Task<BaseResponse<IEnumerable<User>>> GetUsers()
         {
             try
             {
                 var users = _userRepository.GetAll()
-                    .Select(x => new UserViewModel()
+                    .Select(x => new User()
                     {
                         Id = x.Id,
                         Email = x.Email,
                         Name = x.Name,
-                        Role = x.Role.GetDisplayName(),
-                        City = x.City.GetDisplayName(),
-                        Campus = x.Campus.GetDisplayName()
+                        Role = x.Role,
+                        City = x.City,
+                        Campus = x.Campus
                     });
 
-                return new BaseResponse<IEnumerable<UserViewModel>>()
+                return new BaseResponse<IEnumerable<User>>()
                 {
                     Data = users,
                     StatusCode = StatusCode.Success

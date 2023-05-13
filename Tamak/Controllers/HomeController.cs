@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 using Tamak.Data.Interfaces;
+using Tamak.Service.Implementations;
 using Tamak.Service.Interfaces;
 using Tamak.ViewModels;
 
@@ -24,6 +25,11 @@ namespace Tamak.Controllers
         public async Task<IActionResult> IndexAsync()
         {
             var response = await _assortimentService.GetItems(User.Identity.Name);
+
+            var response2 = await _userService.GetUsers();
+
+            var response3 = await _assortimentService.GetItems();
+
             if (response.StatusCode == Data.Enum.StatusCode.Success)
             {
                 HomeViewModel obj = new HomeViewModel();
@@ -121,7 +127,7 @@ namespace Tamak.Controllers
             var response = await _assortimentService.Add(User.Identity.Name);
             if (response.StatusCode == Data.Enum.StatusCode.Success)
             {
-                return Json(new { data = response.Description });
+                return RedirectToAction("Index");
             }
             return RedirectToAction("GetProducts");
         }

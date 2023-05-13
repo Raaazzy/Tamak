@@ -44,13 +44,29 @@
                         {
                             @Html.Partial("AllProducts", product)
                         }
-                        
+
                     }
                     else
                     {
-                        <div class="col-lg-3 d-flex align-items-center">
-                            <h3>Упс, а еда тут еще не появилась....</h3>
-                        </div>
+                        bool flag = false;
+                        foreach (User user in Model.allUsers)
+                        {
+                            if (user.Role.ToString() == "Admin")
+                            {
+                                flag = true;
+
+                                <div class="border col-12">
+                                    <h3>Название: @user.Name.ToString()</h3>
+                                    <p>Город: @user.City.ToString()</p>
+                                </div>
+                            }
+                        }
+                        if (!flag)
+                        {
+                            <div class="col-lg-3 d-flex align-items-center">
+                                <h3>Упс, а еда тут еще не появилась....</h3>
+                            </div>
+                        }
                     }
                 }
         </div>
