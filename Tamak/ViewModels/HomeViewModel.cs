@@ -7,6 +7,8 @@ namespace Tamak.ViewModels
     {
         public IEnumerable<Product> allProducts { get; set; }
 
+        public Assortiment assortiment { get; set; }
+
         public LoginViewModel loginViewModel { get; set; }
     }
 }

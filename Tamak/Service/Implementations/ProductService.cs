@@ -117,17 +117,20 @@ namespace Automarket.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<Product>> Create(ProductViewModel model, byte[] imageData)
+        public async Task<IBaseResponse<Product>> Create(long assortimentId, Assortiment assortiment)
         {
             try
             {
                 var product = new Product()
                 {
-                    Name = model.Name,
-                    Description = model.Description,
-                    Category = (Category)Convert.ToInt32(model.Category),
-                    Price = model.Price,
-                    Avatar = imageData
+                    Name = "кофе",
+                    Description = "кофе",
+                    Price = 0,
+                    Available = true,
+                    AssortimentId = assortimentId,
+                    Assortiment = assortiment,
+                    Category = 0,
+                    CategoryId = 0,
                 };
                 await _productRepository.Create(product);
 

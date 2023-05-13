@@ -19,7 +19,7 @@
                 }
                 @if (User.IsInRole("Admin"))
                 {
-                    <form id="productCardId">
+                    <form id="@Model.Id-productCardId">
                         <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 1">
@@ -28,14 +28,13 @@
                             <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 1">
                         </div>
 
-                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="saveProductId">Сохранить</button>
+                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="@Model.Id-saveProductId" onclick='ckick("#@Model.Id-productCardId");'>Сохранить</button>
 
                     </form>
-                    <form id="productAvaliable">
+                    <form id="@Model.Id-productAvaliable">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <button id="changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
-
+                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
                     </form>
                 }
 
@@ -61,7 +60,7 @@
                 }
                 @if (User.IsInRole("Admin"))
                 {
-                    <form id="productCardId">
+                    <form id="@Model.Id-productCardId">
                         <input asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input type="text" class="form-control fs-2 formColor" asp-for="Name" style="opacity: 0.6">
@@ -70,13 +69,13 @@
                             <input type="text" class="form-control card-text formColor" asp-for="Price" style="opacity: 0.6">
                         </div>
 
-                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="saveProductId">Сохранить</button>
+                        <button type="button" class="col-12 btn btn-sm btn-outline-primary" id="@Model.Id-saveProductId">Сохранить</button>
 
                     </form>
-                    <form id="productAvaliable">
+                    <form id="@Model.Id-productAvaliable">
                         <input asp-for="Id" value="@Model.Id" name="Id" type="radio" class="form-check-input" checked="" required="" style="display:none">
                         <input id="avaliableInput" asp-for="Available" value="@Model.Available" name="Available" type="radio" class="form-check-input" checked="" required="" style="display:none">
-                        <button id="changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
+                        <button id="@Model.Id-changeAvaliable" type="button" class="col-12 btn btn-sm btn-outline-primary">Есть в наличии</button>
 
                     </form>
                 }

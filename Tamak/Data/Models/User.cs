@@ -19,5 +19,7 @@ namespace Tamak.Data.Models
 
         public Role Role { get; set; }
 
+        public Assortiment Assortiment { set; get; }
+
     }
 }

@@ -14,7 +14,7 @@ namespace Tamak.Service.Interfaces
 
         public Task<BaseResponse<Dictionary<long, string>>> GetProduct(string term);
 
-        public Task<IBaseResponse<Product>> Create(ProductViewModel productViewModel, byte[] imageData);
+        public Task<IBaseResponse<Product>> Create(long assortimentId, Assortiment assortiment);
 
         public Task<IBaseResponse<bool>> DeleteProduct(long id);
 

@@ -13,13 +13,15 @@ namespace Tamak.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Assortiment> Assortements { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
+
             modelBuilder.Entity<User>(builder =>
             {
-                builder.HasData(new User
+                builder.HasData(new User()
                 {
                     Id = 1,
                     Name = "Test1",
@@ -27,8 +29,7 @@ namespace Tamak.Data
                     Password = HashPasswordHelper.HashPassowrd("Test1"),
                     Role = Role.Admin,
                     City = City.Moscow,
-                    Campus = Campus.Pokrovka
-
+                    Campus = Campus.Pokrovka,
                 });
                 builder.ToTable("User").HasKey(x => x.Id);
                 builder.Property(x => x.Id).ValueGeneratedOnAdd();
@@ -36,26 +37,36 @@ namespace Tamak.Data
                 builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
                 builder.Property(x => x.Email).HasMaxLength(100).IsRequired();
 
+                builder.HasOne(x => x.Assortiment).WithOne(x => x.User).HasPrincipalKey<User>(x => x.Id).OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<Assortiment>(builder =>
+            {
+                builder.ToTable("Assortiments").HasKey(x => x.Id);
+
+                builder.HasData(new Assortiment()
+                {
+                    Id = 1,
+                    UserId = 1
+                });
+            });
 
             modelBuilder.Entity<Product>(builder =>
             {
-                builder.HasData(new Product
+                builder.HasData(new Product()
                 {
                     Id = 1,
                     Name = "Латте",
                     Description = "Свежий кофе с молочным оттенком",
-                    //Img = "https://dodopizza-a.akamaihd.net/static/Img/Products/d45790074f574ccfa9c75884dfe55f09_584x584.webp",
                     Price = 200,
                     Available = true,
-                    Category = Category.Coffee
+                    Category = Category.Coffee,
+                    AssortimentId = 1,
                 });
                 builder.ToTable("Products").HasKey(x => x.Id);
                 builder.Property(x => x.Id).ValueGeneratedOnAdd();
+                builder.HasOne(r => r.Assortiment).WithMany(t => t.Products).HasForeignKey(x => x.AssortimentId);
             });
-
-            
         }
     }
 }

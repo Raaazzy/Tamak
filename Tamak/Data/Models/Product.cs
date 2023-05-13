@@ -14,5 +14,8 @@ namespace Tamak.Data.Models
         public Category Category { set; get; }
         public byte[]? Avatar { get; set; }
 
+        public long AssortimentId { set; get; }
+        public virtual Assortiment Assortiment { set; get; }
+
     }
 }

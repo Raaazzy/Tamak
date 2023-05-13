@@ -11,7 +11,7 @@ using Tamak.Data;
 namespace Tamak.Migrations
 {
     [DbContext(typeof(AppDBContent))]
-    [Migration("20230507124833_Initial")]
+    [Migration("20230512235023_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,32 @@ namespace Tamak.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Tamak.Data.Models.Assortiment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Assortiments", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            UserId = 1L
+                        });
+                });
+
             modelBuilder.Entity("Tamak.Data.Models.Product", b =>
                 {
                     b.Property<long>("Id")
@@ -31,6 +57,9 @@ namespace Tamak.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AssortimentId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
@@ -60,12 +89,15 @@ namespace Tamak.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssortimentId");
+
                     b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1L,
+                            AssortimentId = 1L,
                             Available = true,
                             Category = 0,
                             CategoryId = 0,
@@ -121,6 +153,39 @@ namespace Tamak.Migrations
                             Password = "8a863b145dc6e4ed7ac41c08f7536c476ebac7509e028ed2b49f8bd5a3562b9f",
                             Role = 2
                         });
+                });
+
+            modelBuilder.Entity("Tamak.Data.Models.Assortiment", b =>
+                {
+                    b.HasOne("Tamak.Data.Models.User", "User")
+                        .WithOne("Assortiment")
+                        .HasForeignKey("Tamak.Data.Models.Assortiment", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tamak.Data.Models.Product", b =>
+                {
+                    b.HasOne("Tamak.Data.Models.Assortiment", "Assortiment")
+                        .WithMany("Products")
+                        .HasForeignKey("AssortimentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assortiment");
+                });
+
+            modelBuilder.Entity("Tamak.Data.Models.Assortiment", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Tamak.Data.Models.User", b =>
+                {
+                    b.Navigation("Assortiment")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

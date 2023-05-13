@@ -14,6 +14,7 @@ namespace Tamak
         {
             services.AddScoped<IBaseRepository<Product>, ProductRepository>();
             services.AddScoped<IBaseRepository<User>, UserRepository>();
+            services.AddScoped<IBaseRepository<Assortiment>, AssortimentRepository>();
             /*services.AddScoped<IBaseRepository<Basket>, BasketRepository>();
             services.AddScoped<IBaseRepository<Order>, OrderRepository>();*/
         }
@@ -23,6 +24,7 @@ namespace Tamak
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAssortimentService, AssortimentService>();
             /*services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();*/
         }

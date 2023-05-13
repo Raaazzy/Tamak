@@ -85,6 +85,8 @@ namespace Tamak.Controllers
             return RedirectToAction("GetProducts");
         }
 
+        
+
         [HttpPost]
         public JsonResult GetCategories()
         {

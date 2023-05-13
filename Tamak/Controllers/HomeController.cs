@@ -10,23 +10,28 @@ namespace Tamak.Controllers
     public class HomeController : Controller
     {
         private readonly IProductService _productService;
+        private readonly IAssortimentService _assortimentService;
+        private readonly IUserService _userService;
 
-        public HomeController(IProductService productService)
+        public HomeController(IProductService productService, IAssortimentService assortimentService, IUserService userService)
         {
             _productService = productService;
+            _assortimentService = assortimentService;
+            _userService = userService;
         }
 
         [HttpGet]
-        public IActionResult IndexAsync()
+        public async Task<IActionResult> IndexAsync()
         {
-            var response = _productService.GetProducts();
+            var response = await _assortimentService.GetItems(User.Identity.Name);
             if (response.StatusCode == Data.Enum.StatusCode.Success)
             {
                 HomeViewModel obj = new HomeViewModel();
                 obj.allProducts = response.Data;
                 return View(obj);
+
             }
-            return RedirectToAction("Error");
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpGet]
@@ -106,6 +111,17 @@ namespace Tamak.Controllers
                 {
                     return Json(new { data = response.Description });
                 }
+            }
+            return RedirectToAction("GetProducts");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add()
+        {
+            var response = await _assortimentService.Add(User.Identity.Name);
+            if (response.StatusCode == Data.Enum.StatusCode.Success)
+            {
+                return Json(new { data = response.Description });
             }
             return RedirectToAction("GetProducts");
         }

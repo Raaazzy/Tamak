@@ -9,8 +9,16 @@
 
         <ul class="nav nav-pills">
                 <li class="nav-item"><a href="/User/GetUser" class="nav-link text-dark">Профиль</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark">Корзина</a></li>
-            <li class="nav-item">
+                <li class="nav-item">
+                    @if (User.IsInRole("User"))
+                    {
+                        <a href="#" class="nav-link text-dark">Корзина</a>
+                    } else
+                    {
+                        <a href="#" class="nav-link text-dark">Список заказов</a>
+                    }
+                </li>
+                <li class="nav-item">
                 <form method="post" asp-controller="Account" asp-action="Logout">
                     <input class="nav-link text-dark" type="submit" value="Выйти"/>
                 </form>
@@ -23,14 +31,36 @@
 <div style="background-color: #f2f2f2" class="album py-5">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            @{
-                foreach (Product product in Model.allProducts)
-                {
-                    @Html.Partial("AllProducts", product)
+                @{
+                    if (User.IsInRole("Admin"))
+                    {
+                        if (Model.allProducts == null)
+                        {
+                            <div class="col-lg-3 d-flex align-items-center">
+                                <h3>Упс, а еда тут еще не появилась...</h3>
+                            </div>
+                        }
+                        foreach (Product product in Model.allProducts)
+                        {
+                            @Html.Partial("AllProducts", product)
+                        }
+                        
+                    }
+                    else
+                    {
+                        <div class="col-lg-3 d-flex align-items-center">
+                            <h3>Упс, а еда тут еще не появилась....</h3>
+                        </div>
+                    }
                 }
+        </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <form asp-controller="Home" asp-action="Add">
+                    <button class="w-100 btn btn-primary" type="submit">Добавить продукт</button>
+                </form>
             }
         </div>
-    </div>
 </div>
 
 
@@ -42,15 +72,15 @@ else
 
 @section pageScripts {
     <script>
-        $('#saveProductId').on('click', function () {
-            const data = $('#productCardId').serialize();
+        function ckick(str) {
+            const data = $(str).serialize();
             $.ajax({
                 url: '@Url.Action("Save")',
                 type: 'POST',
                 data: data,
 
             });
-        });
+        }
 
         $('#changeAvaliable').on('click', function () {
             const data = $('#productAvaliable').serialize();
@@ -61,7 +91,7 @@ else
 
             });
 
-            $(this).text(function(i, text) {
+            $(this).text(function (i, text) {
                 return text === "Нет в наличии" ? "Есть в наличии" : "Нет в наличии";
             });
 
